@@ -8,6 +8,10 @@
 #include "char.h"
 #include "rs-common.h"
 
+/* The macros from char.h remain in scope for init_rs.h, but
+ * they pollute the global namespace afterwards.  We'll
+ * undefine them once we're done including init_rs.h. */
+
 void free_rs_char(void *p){
   struct rs *rs = (struct rs *)p;
 
@@ -30,6 +34,20 @@ void *init_rs_char(int symsize,int gfpoly,int fcr,int prim,
   struct rs *rs;
 
 #include "init_rs.h"
+
+  /* Clean up macros imported from char.h */
+#undef MODNN
+#undef MM
+#undef NN
+#undef ALPHA_TO
+#undef INDEX_OF
+#undef GENPOLY
+#undef NROOTS
+#undef FCR
+#undef PRIM
+#undef IPRIM
+#undef PAD
+#undef A0
 
   return rs;
 }
