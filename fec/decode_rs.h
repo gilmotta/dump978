@@ -21,9 +21,10 @@
  * DEBUG - If set to 1 or more, do various internal consistency checking. Leave this
  *         undefined for production code
 
- * The memset(), memmove(), and memcpy() functions are used. The appropriate header
- * file declaring these functions (usually <string.h>) must be included by the calling
- * program.
+ * The memset(), memmove(), and memcpy() functions are used.  The appropriate
+ * header file declaring these functions (usually <string.h>) must be included
+ * by the calling program.  Dynamic allocation is performed with calloc() and
+ * free(), so <stdlib.h> must also be included.
  */
 
 
@@ -70,13 +71,21 @@
 
 {
   int deg_lambda, el, deg_omega;
-  int i, j, r,k;
-  data_t u,q,tmp,num1,num2,den,discr_r;
-  data_t lambda[NROOTS+1], s[NROOTS];	/* Err+Eras Locator poly
-					 * and syndrome poly */
-  data_t b[NROOTS+1], t[NROOTS+1], omega[NROOTS+1];
-  data_t root[NROOTS], reg[NROOTS+1], loc[NROOTS];
+  int i, j, r, k;
+  data_t u, q, tmp, num1, num2, den, discr_r;
+  data_t *lambda = (data_t *)calloc(NROOTS + 1, sizeof(data_t));
+  data_t *s      = (data_t *)calloc(NROOTS, sizeof(data_t));
+  data_t *b      = (data_t *)calloc(NROOTS + 1, sizeof(data_t));
+  data_t *t      = (data_t *)calloc(NROOTS + 1, sizeof(data_t));
+  data_t *omega  = (data_t *)calloc(NROOTS + 1, sizeof(data_t));
+  data_t *root   = (data_t *)calloc(NROOTS, sizeof(data_t));
+  data_t *reg    = (data_t *)calloc(NROOTS + 1, sizeof(data_t));
+  data_t *loc    = (data_t *)calloc(NROOTS, sizeof(data_t));
   int syn_error, count;
+  if(!lambda || !s || !b || !t || !omega || !root || !reg || !loc){
+    retval = -1;
+    goto cleanup;
+  }
 
   /* form the syndromes; i.e., evaluate data(x) at roots of g(x) */
   for(i=0;i<NROOTS;i++)
@@ -295,4 +304,13 @@
       eras_pos[i] = loc[i];
   }
   retval = count;
+cleanup:
+  free(lambda);
+  free(s);
+  free(b);
+  free(t);
+  free(omega);
+  free(root);
+  free(reg);
+  free(loc);
 }
