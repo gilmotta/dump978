@@ -10,9 +10,11 @@
 #include <string.h>
 #include <stdlib.h>
 
+
 #ifndef MIN
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
 #endif
+
 
 #include "char.h"
 #include "rs-common.h"
@@ -278,6 +280,27 @@ finish:
     }
     retval = count;
 
+
+int decode_rs_char(void *p, data_t *data, int *eras_pos, int no_eras){
+  int retval;
+  struct rs *rs = (struct rs *)p;
+
+#include "decode_rs.h"
+
+  /* Clean up macros imported from char.h */
+#undef MODNN
+#undef MM
+#undef NN
+#undef ALPHA_TO
+#undef INDEX_OF
+#undef GENPOLY
+#undef NROOTS
+#undef FCR
+#undef PRIM
+#undef IPRIM
+#undef PAD
+#undef A0
+
 cleanup:
     free(lambda);
     free(s);
@@ -288,4 +311,5 @@ cleanup:
     free(reg);
     free(loc);
     return retval;
+
 }
